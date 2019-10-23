@@ -13,3 +13,7 @@ boto3_iam_access_key_rotation.py
 https://gist.github.com/andymotta/cb64ebd71c4703726501fe9a3776ce3d
 
 https://github.com/jicowan/key_rotator/blob/master/key_rotator.py
+
+https://docs.aws.amazon.com/fr_fr/general/latest/gr/aws-access-keys-best-practices.html
+https://docs.aws.amazon.com/fr_fr/IAM/latest/UserGuide/id_credentials_access-keys.html
+https://aws.amazon.com/fr/blogs/security/how-to-rotate-access-keys-for-iam-users/
