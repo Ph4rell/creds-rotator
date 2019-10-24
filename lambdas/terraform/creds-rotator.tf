@@ -5,7 +5,7 @@ provider "aws" {
 data "archive_file" "lambda_log_parser-zip" {
   type        = "zip"
   source_dir  = "../creds-rotator/"
-  output_path = "../creds-rotator/.zip"
+  output_path = "../creds-rotator.zip"
 }
 
 resource "aws_iam_role" "role_for_lambda" {
@@ -60,11 +60,10 @@ resource "aws_iam_role_policy_attachment" "lambda_rotate_creds" {
 }
 
 resource "aws_lambda_function" "lambda_rotate_creds" {
-  filename      = "../creds_rotator/.zip"
+  filename      = "../creds-rotator.zip"
   function_name = "lambda_rotate_creds"
   role          = "${aws_iam_role.role_for_lambda.arn}"
   handler       = "main.main"
   source_code_hash = "$data.archive_file.lambda_log_parser-zip.output_base64sha256"
   runtime = "python3.7"
   }
-
