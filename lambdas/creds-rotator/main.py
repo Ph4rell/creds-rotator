@@ -6,7 +6,7 @@ from user import list_iam_users
 def main():
     for user in list_iam_users():
         for key in list_access_keys(user):
-            print(f"{user} {key}")
+            print(f"{key}")
             
 
 
