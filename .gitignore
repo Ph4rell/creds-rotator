@@ -1,3 +1,6 @@
 .vscode
 .git
+.terraform
+*.tfstate
+*.backup
 automcreds/
