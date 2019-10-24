@@ -13,7 +13,6 @@ def lambda_handler(event, context):
 
     try:
 
-
         for user in data['Users']:
             users = {
                 'username': user['UserName'],
@@ -58,7 +57,9 @@ def lambda_handler(event, context):
                         f'New KeyID : {new_access_key} - ' 
                         f'New Secret Key : {new_secret_key}'
                         )
-                    send_email('pierre.poree@d2si.io', users['username'], age,access_key_id)
+
+                    # Send email to admin - need to find user email
+                    send_desactivation_email('pierre.poree@d2si.io', users['username'], age,access_key_id)
                 
                 
     
@@ -87,7 +88,7 @@ def key_age(key_created_date):
     return days
 
 
-def send_email(email_to, username, age, access_key_id):
+def send_desactivation_email(email_to, username, age, access_key_id):
 
     client = boto3.client('ses')
 

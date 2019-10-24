@@ -46,7 +46,8 @@ resource "aws_iam_policy" "lambda_rotate_creds" {
                 "iam:GetUser",
                 "iam:ListAccessKeys",
                 "iam:UpdateAccessKey",
-                "iam:ListUsers"
+                "iam:ListUsers",
+                "ses:SendEmail"
             ],
         "Resource": "*"
         }
@@ -64,7 +65,7 @@ resource "aws_lambda_function" "lambda_rotate_creds" {
   filename      = "../creds-rotator.zip"
   function_name = "lambda_rotate_creds"
   role          = "${aws_iam_role.role_for_lambda.arn}"
-  handler       = "main.main"
+  handler       = "main.lambda_handler"
   source_code_hash = "$data.archive_file.lambda_log_parser-zip.output_base64sha256"
   runtime = "python3.7"
   }
