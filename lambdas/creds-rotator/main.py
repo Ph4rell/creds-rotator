@@ -38,7 +38,7 @@ def lambda_handler(event, context):
                     )
 
 
-                if age == 0:
+                if age > 90:
                     # Deletion of old accesskey
                     delete_access_key = client.delete_access_key(
                         AccessKeyId=access_key_id,
@@ -67,13 +67,16 @@ def lambda_handler(event, context):
         print(error)
     except botocore.exceptions.ParamValidationError as error:
         print(error)
+    
+    finally:
+        print('Fin de script')
         
 
 
 
 def key_age(key_created_date):
     """
-    Format the date and return age of the key
+    Format the date and return age of the accesskey
     """
     tz_info = key_created_date.tzinfo
 
@@ -89,11 +92,13 @@ def key_age(key_created_date):
 
 
 def send_desactivation_email(email_to, username, age, access_key_id):
-
+    """
+    Function to send email to admin/user
+    """
     client = boto3.client('ses')
 
-    data = f'The Access Key {access_key_id} belonging to User {username} has been automatically ' \
-           f'deactivated due to it being {age} days old'
+    data = f'The Access Key {access_key_id} belonging to User {username} ' \
+           f'has been automatically deactivated due to it being {age} days old'
 
     response = client.send_email(
         Source='pierre.poree@d2si.io',
@@ -109,7 +114,8 @@ def send_desactivation_email(email_to, username, age, access_key_id):
                     'Data': data
                 }
             }
-        })
+        }
+    )
 
 
 if __name__ == "__main__":

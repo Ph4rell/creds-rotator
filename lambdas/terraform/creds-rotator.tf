@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-west-1"
+  region      = "eu-west-1"
 }
 
 data "archive_file" "lambda_log_parser-zip" {
@@ -9,7 +9,7 @@ data "archive_file" "lambda_log_parser-zip" {
 }
 
 resource "aws_iam_role" "role_for_lambda" {
-  name = "role_for_lambda"
+  name      = "role_for_lambda"
 
   assume_role_policy = <<EOF
 {
@@ -30,7 +30,7 @@ EOF
 
 resource "aws_iam_policy" "lambda_rotate_creds" {
   name = "Policy4LambdaRotateCreds"
-  description = "Policy for the lambda to rotate expired IAM creds"
+  description   = "Policy for the lambda to rotate expired IAM creds"
 
   policy = <<EOF
 {
@@ -57,8 +57,8 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_rotate_creds" {
-  role       = "${aws_iam_role.role_for_lambda.name}"
-  policy_arn = "${aws_iam_policy.lambda_rotate_creds.arn}"
+  role          = "${aws_iam_role.role_for_lambda.name}"
+  policy_arn    = "${aws_iam_policy.lambda_rotate_creds.arn}"
 }
 
 resource "aws_lambda_function" "lambda_rotate_creds" {
@@ -67,5 +67,16 @@ resource "aws_lambda_function" "lambda_rotate_creds" {
   role          = "${aws_iam_role.role_for_lambda.arn}"
   handler       = "main.lambda_handler"
   source_code_hash = "$data.archive_file.lambda_log_parser-zip.output_base64sha256"
-  runtime = "python3.7"
+  runtime       = "python3.7"
   }
+
+resource "aws_cloudwatch_event_rule" "watch_creds" {
+  name          = "CloudWatch-Creds"
+  description   = "EveryDay Cron to check expired IAM creds"
+  schedule_expression = "cron(0 0 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "lambda_target" {
+  rule      = "${aws_cloudwatch_event_rule.watch_creds.name}"
+  arn       = "${aws_lambda_function.lambda_rotate_creds.arn}"
+}
