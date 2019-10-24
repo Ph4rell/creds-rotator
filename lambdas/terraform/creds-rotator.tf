@@ -45,7 +45,8 @@ resource "aws_iam_policy" "lambda_rotate_creds" {
                 "iam:GetAccessKeyLastUsed",
                 "iam:GetUser",
                 "iam:ListAccessKeys",
-                "iam:UpdateAccessKey"
+                "iam:UpdateAccessKey",
+                "iam:ListUsers"
             ],
         "Resource": "*"
         }
