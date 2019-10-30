@@ -11,17 +11,19 @@ def lambda_handler(event, context):
     data = client.list_users()
     list_users = list()
 
-    try:
 
-        for user in data['Users']:
-            users = {
-                'username': user['UserName'],
-                'userid' : user['UserId']
-            }
-            list_users.append(users)
-            print(users['username'])
 
-            access_keys = client.list_access_keys(UserName=users['username'])
+    for user in data.get('Users'):
+        users = {
+            'username': user['UserName'],
+            'userid' : user['UserId']
+        }
+        list_users.append(users)
+        print(users['username'])
+
+        access_keys = client.list_access_keys(UserName=users['username'])
+
+        try:
 
             for access_key in access_keys['AccessKeyMetadata']:
 
@@ -46,30 +48,30 @@ def lambda_handler(event, context):
                     )
 
                     # Creation of the new accesskey
-                    create_access_key = client.create_access_key(
-                        UserName= users['username']
-                    )
+                    # create_access_key = client.create_access_key(
+                    #     UserName= users['username']
+                    # )
 
-                    new_access_key = create_access_key['AccessKey'].get('AccessKeyId')
-                    new_secret_key = create_access_key['AccessKey'].get('SecretAccessKey')
+                    # new_access_key = create_access_key['AccessKey'].get('AccessKeyId')
+                    # new_secret_key = create_access_key['AccessKey'].get('SecretAccessKey')
                     
-                    print(
-                        f'New KeyID : {new_access_key} - ' 
-                        f'New Secret Key : {new_secret_key}'
-                        )
+                    # print(
+                    #     f'New KeyID : {new_access_key} - ' 
+                    #     f'New Secret Key : {new_secret_key}'
+                    #     )
 
                     # Send email to admin - need to find user email
                     send_desactivation_email('pierre.poree@d2si.io', users['username'], age,access_key_id)
                 
                 
     
-    except botocore.exceptions.ClientError as error:
-        print(error)
-    except botocore.exceptions.ParamValidationError as error:
-        print(error)
-    
-    finally:
-        print('Fin de script')
+        except botocore.exceptions.ClientError as error:
+            print(error)
+        except botocore.exceptions.ParamValidationError as error:
+            print(error)
+        
+        finally:
+            print('Fin de script')
         
 
 
@@ -107,7 +109,8 @@ def send_desactivation_email(email_to, username, age, access_key_id):
         },
         Message={
             'Subject': {
-                'Data': f'AWS IAM Access Key Rotation - Deactivation of Access Key: {access_key_id}'
+                'Data': f'AWS IAM Access Key Rotation - ' \
+                f'Deactivation of Access Key: {access_key_id}'
             },
             'Body': {
                 'Text': {
