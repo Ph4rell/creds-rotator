@@ -5,3 +5,6 @@
 *.backup
 automcreds/
 py.py
+lambdas/creds-rotator/__pycache__/
+
+*.zip
