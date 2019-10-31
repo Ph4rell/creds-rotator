@@ -85,7 +85,7 @@ resource "aws_cloudwatch_event_rule" "watch_creds" {
 
 resource "aws_cloudwatch_event_target" "lambda_target" {
   rule      = "${aws_cloudwatch_event_rule.watch_creds.name}"
-  arn       = "${aws_lambda_function.lambda_rotate_creds.arn}"
+  arn       = "${aws_lambda_alias.alias_prod.arn}"
 }
 
 resource "aws_ses_email_identity" "example" {
@@ -101,11 +101,18 @@ resource "aws_lambda_alias" "alias_prod" {
   description      = "Alias for the Prod"
   function_name    = "${aws_lambda_function.lambda_rotate_creds.arn}"
   function_version = "1"
+
+  routing_config {
+    additional_version_weights = {
+      "2" = 0.5
+    }
+  }
+
 }
 
 resource "aws_lambda_alias" "alias_dev" {
   name             = "Dev"
   description      = "Alias for the Dev"
   function_name    = "${aws_lambda_function.lambda_rotate_creds.arn}"
-  function_version = "2"
+  function_version = "$LATEST"
 }
