@@ -73,6 +73,7 @@ resource "aws_lambda_function" "lambda_rotate_creds" {
   runtime           = "python3.7"
   memory_size       = "1024"
   timeout           = "60"
+  publish           = "true"
 
   }
 
@@ -89,4 +90,22 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
 
 resource "aws_ses_email_identity" "example" {
   email = "pierre.poree@d2si.io"
+}
+
+output "version_number" {
+  value = "${aws_lambda_function.lambda_rotate_creds.version}"
+}
+
+resource "aws_lambda_alias" "alias_prod" {
+  name             = "Prod"
+  description      = "Alias for the Prod"
+  function_name    = "${aws_lambda_function.lambda_rotate_creds.arn}"
+  function_version = "1"
+}
+
+resource "aws_lambda_alias" "alias_dev" {
+  name             = "Dev"
+  description      = "Alias for the Dev"
+  function_name    = "${aws_lambda_function.lambda_rotate_creds.arn}"
+  function_version = "2"
 }
