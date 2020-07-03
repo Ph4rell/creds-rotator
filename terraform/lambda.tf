@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "lambda" {
   filename          = "lambda.zip"
-  function_name     = "lambda_rotate_creds"
+  function_name     = "creds_rotator"
   role              = aws_iam_role.lambda_role.arn
   handler           = "main.lambda_handler"
   source_code_hash  = data.archive_file.lambda_log_parser-zip.output_base64sha256
@@ -8,8 +8,7 @@ resource "aws_lambda_function" "lambda" {
   memory_size       = "1024"
   timeout           = "60"
   publish           = false
-
-  }
+}
 
 resource "aws_lambda_alias" "alias_prod" {
   name             = "Prod"
@@ -22,7 +21,6 @@ resource "aws_lambda_alias" "alias_prod" {
       "2" = 0.1 # 10% of requests sent to lambda version 2
      }
   }
-
 }
 
 resource "aws_lambda_alias" "alias_dev" {
