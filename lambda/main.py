@@ -1,4 +1,4 @@
-#main function
+#main function to delete expred creds
 import boto3
 import botocore
 from datetime import datetime
@@ -69,9 +69,6 @@ def lambda_handler(event, context):
             print(error)
         except botocore.exceptions.ParamValidationError as error:
             print(error)
-        
-        finally:
-            print('Fin de script')
         
 
 
